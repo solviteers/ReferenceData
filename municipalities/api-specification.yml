@@ -1,0 +1,134 @@
+openapi: 3.0.2
+info:
+  title: Solviteers reference data
+  version: 1.0.0
+  description: "This service is used to retrieve Solviteers wide reference data"
+servers:
+  - url: https://localhost:32770/api
+  - url: https://testen.solviteers.nl/Solviteers.ReferenceData.Municipalities_test/api
+paths:
+  /municipalities/:
+    get:
+      tags:
+        - municipalities
+      summary: return all the Dutch municipalities including their CBS code
+      operationId: getMunicipalities
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/municipality"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Forbidden"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+security:
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+     municipality:
+      type: object
+      description: "A Dutch municipality"
+      additionalProperties: false
+      properties:
+        cbsCode:
+          type: string
+          maxLength: 4
+        gmCode:
+          type: string
+          maxLength: 6
+        name:
+          type: string
+        cbsProvinceCode:
+          type: string
+          maxLength: 2
+        pvProvinceCode:
+          type: string
+          maxLength: 4
+        provinceName:
+          type: string
+     NotFound:
+       type: object
+       properties:
+         successful:
+           type: boolean
+           example: "false"
+         errorCode:
+           type: string
+           example: "not found"
+         data:
+           type: object
+           description: response with payload
+       xml:
+         name: NotFound
+     BadRequest:
+       type: object
+       properties:
+         successful:
+           type: boolean
+           example: "false"
+         errorCode:
+           type: string
+           example: "bad request"
+         data:
+           type: object
+           description: response with payload
+       xml:
+         name: BadRequest
+     Forbidden:
+       type: object
+       properties:
+         successful:
+           type: boolean
+           example: "false"
+         errorCode:
+           type: string
+           example: "Access Forbidden"
+         data:
+           type: object
+           description: response with payload
+       xml:
+         name: Forbidden
+     Unauthorized:
+       type: object
+       properties:
+         successful:
+           type: boolean
+           example: "false"
+         errorCode:
+           type: string
+           example: "Unauthorized Access"
+         data:
+           type: object
+           description: response with payload
+       xml:
+         name: Unauthorized
